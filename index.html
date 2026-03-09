@@ -19,11 +19,11 @@
     --card-alt:     #F8FAF8;
     --border:       #DDE6DD;
     --border-light: #EBF1EB;
-    --green:        #1B6B40;
-    --green-mid:    #27915A;
-    --green-light:  #E4F1EB;
-    --green-faint:  #EEF7F2;
-    --green-glow:   rgba(27,107,64,0.13);
+    --green:        #FF8663;
+    --green-mid:    #e8754f;
+    --green-light:  #FFF0EB;
+    --green-faint:  #FFF5F2;
+    --green-glow:   rgba(255,134,99,0.13);
     --red:          #C53030;
     --amber:        #B45309;
     --text:         #111B11;
@@ -63,9 +63,9 @@
     border-bottom:1px solid var(--border); flex-wrap:wrap; gap:10px;
   }
   .logo { display:flex; align-items:center; gap:9px; font-family:var(--font); font-size:16px; font-weight:700; letter-spacing:-0.3px; color:var(--text); }
-  .logo-mark { width:32px; height:32px; background:var(--green); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 2px 8px rgba(27,107,64,.3); flex-shrink:0; }
+  .logo-mark { width:32px; height:32px; background:var(--green); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:16px; box-shadow:0 2px 8px rgba(255,134,99,.3); flex-shrink:0; }
   .logo em { font-style:normal; color:var(--green); }
-  .header-badge { font-size:11px; font-weight:500; color:var(--green); background:var(--green-light); border:1px solid rgba(27,107,64,.18); padding:4px 11px; border-radius:20px; }
+  .header-badge { font-size:11px; font-weight:500; color:var(--green); background:var(--green-light); border:1px solid rgba(255,134,99,.18); padding:4px 11px; border-radius:20px; }
 
   /* ── HERO ── */
   .hero { padding:36px 0 32px; }
@@ -129,9 +129,9 @@
     border-radius:var(--r-sm); font-family:var(--font); font-size:13.5px;
     font-weight:600; cursor:pointer;
     transition:background .15s,box-shadow .15s,transform .1s;
-    box-shadow:0 2px 8px rgba(27,107,64,.28);
+    box-shadow:0 2px 8px rgba(255,134,99,.28);
   }
-  .calc-btn:hover { background:#1f7d4a; box-shadow:0 4px 14px rgba(27,107,64,.32); transform:translateY(-1px); }
+  .calc-btn:hover { background:#e8754f; box-shadow:0 4px 14px rgba(255,134,99,.32); transform:translateY(-1px); }
   .calc-btn:active { transform:none; box-shadow:none; }
 
   /* ══════════════════════════
@@ -143,7 +143,7 @@
 
   .kpi { background:var(--card); border:1px solid var(--border); border-radius:var(--r); padding:16px 18px 14px; box-shadow:var(--sh-sm); transition:box-shadow .2s,border-color .2s; position:relative; overflow:hidden; }
   .kpi::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:var(--border-light); }
-  .kpi.hi { background:var(--green-faint); border-color:rgba(27,107,64,.18); }
+  .kpi.hi { background:var(--green-faint); border-color:rgba(255,134,99,.18); }
   .kpi.hi::after { background:var(--green); opacity:.6; }
   .kpi:hover { box-shadow:var(--sh); }
   .kpi-lbl { font-size:10.5px; font-weight:500; letter-spacing:.04em; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
@@ -163,8 +163,8 @@
   .tcard { background:var(--card); border:1px solid var(--border); border-radius:var(--r-lg); box-shadow:var(--sh-sm); overflow:hidden; }
   .thdr { padding:14px 20px 12px; border-bottom:1px solid var(--border-light); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
   .thdr-txt { font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
-  .xbtn { display:flex; align-items:center; gap:6px; padding:7px 13px; background:var(--green-light); border:1px solid rgba(27,107,64,.22); border-radius:var(--r-sm); color:var(--green); font-family:var(--font); font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; }
-  .xbtn:hover { background:var(--green); color:#fff; border-color:var(--green); box-shadow:0 2px 8px rgba(27,107,64,.25); }
+  .xbtn { display:flex; align-items:center; gap:6px; padding:7px 13px; background:var(--green-light); border:1px solid rgba(255,134,99,.22); border-radius:var(--r-sm); color:var(--green); font-family:var(--font); font-size:12px; font-weight:600; cursor:pointer; transition:all .15s; }
+  .xbtn:hover { background:var(--green); color:#fff; border-color:var(--green); box-shadow:0 2px 8px rgba(255,134,99,.25); }
   .tscroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table { width:100%; border-collapse:collapse; font-size:12px; font-family:var(--mono); }
   thead th { padding:8px 11px; text-align:right; font-size:10px; font-weight:500; letter-spacing:.07em; text-transform:uppercase; color:var(--text-muted); border-bottom:1px solid var(--border); white-space:nowrap; background:var(--card-alt); font-family:var(--font); }
@@ -249,7 +249,7 @@
     .tab-btn.active {
       background:var(--green);
       color:#fff;
-      box-shadow:0 2px 8px rgba(27,107,64,.28);
+      box-shadow:0 2px 8px rgba(255,134,99,.28);
     }
     .tab-btn span { font-size:15px; }
 
@@ -530,7 +530,7 @@ function render(rows) {
   cc.innerHTML = `
     <div class="chart-hdr">Gelir &amp; Kar Trendi
       <div class="legend">
-        <span><span class="dot" style="background:#1B6B40"></span>Gelir</span>
+        <span><span class="dot" style="background:#FF8663"></span>Gelir</span>
         <span><span class="dot" style="background:#B45309"></span>Net Kar</span>
         <span><span class="dot" style="background:#C53030"></span>Zarar</span>
       </div>
@@ -632,13 +632,13 @@ function drawChart(rows) {
   ctx.lineTo(tx(11),ty(Math.max(minV,0))); ctx.lineTo(tx(0),ty(Math.max(minV,0)));
   ctx.closePath();
   const gr=ctx.createLinearGradient(0,pad.t,0,pad.t+ch2);
-  gr.addColorStop(0,'rgba(27,107,64,.10)'); gr.addColorStop(1,'rgba(27,107,64,.01)');
+  gr.addColorStop(0,'rgba(255,134,99,.10)'); gr.addColorStop(1,'rgba(255,134,99,.01)');
   ctx.fillStyle=gr; ctx.fill();
 
   // revenue line
   ctx.beginPath();
   revs.forEach((v,i)=>i===0?ctx.moveTo(tx(i),ty(v)):ctx.lineTo(tx(i),ty(v)));
-  ctx.strokeStyle='#1B6B40'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.strokeStyle='#FF8663'; ctx.lineWidth=2.5; ctx.stroke();
 
   // profit line
   for (let i=0;i<11;i++) {
