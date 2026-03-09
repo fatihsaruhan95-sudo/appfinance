@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>AppProjector — Mobil SaaS Finansal Projeksiyon</title>
+<title>weeat app finance — Aylık Finansal Tablo</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -408,7 +408,7 @@
   </div><!-- /main-grid -->
 
   <footer>
-    <span>AppProjector · Mobil SaaS Finansal Modeli</span>
+    <span>weeat app finance · Mobil SaaS Finansal Modeli</span>
     <span>Tüm değerler tahminidir · Yatırım tavsiyesi değildir</span>
   </footer>
 </div>
@@ -700,7 +700,7 @@ function exportExcel() {
   const ws2=XLSX.utils.aoa_to_sheet(id);
   ws2['!cols']=[{wch:30},{wch:16}];
   XLSX.utils.book_append_sheet(wb,ws2,'Varsayımlar');
-  XLSX.writeFile(wb,'AppProjector_2026.xlsx');
+  XLSX.writeFile(wb,'weeat app finance_2026.xlsx');
 }
 
 window.addEventListener('load', calculate);
