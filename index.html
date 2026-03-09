@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AppProjector — Mobil SaaS Finansal Projeksiyon</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  /* ── Euclid Circular A – loaded if available, falls back gracefully ── */
+  @font-face {
+    font-family: 'Euclid Circular A';
+    src: local('Euclid Circular A'),
+         local('EuclidCircularA-Regular');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Euclid Circular A';
+    src: local('Euclid Circular A Medium'),
+         local('EuclidCircularA-Medium');
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Euclid Circular A';
+    src: local('Euclid Circular A SemiBold'),
+         local('EuclidCircularA-SemiBold');
+    font-weight: 600; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Euclid Circular A';
+    src: local('Euclid Circular A Bold'),
+         local('EuclidCircularA-Bold');
+    font-weight: 700; font-style: normal; font-display: swap;
+  }
+
+  :root {
+    --bg:           #F4F6F4;
+    --surface:      #FFFFFF;
+    --card:         #FFFFFF;
+    --card-alt:     #F8FAF8;
+    --border:       #DDE6DD;
+    --border-light: #EBF1EB;
+
+    --green:        #1B6B40;
+    --green-mid:    #27915A;
+    --green-light:  #E4F1EB;
+    --green-faint:  #EEF7F2;
+    --green-glow:   rgba(27,107,64,0.13);
+
+    --red:          #C53030;
+    --red-light:    #FEF2F2;
+    --amber:        #B45309;
+
+    --text:         #111B11;
+    --text-dim:     #3D5C3D;
+    --text-muted:   #7A9A7A;
+    --text-faint:   #B2C8B2;
+
+    --font: 'Euclid Circular A', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+    --r-sm: 8px;
+    --r:    12px;
+    --r-lg: 16px;
+    --sh-sm: 0 1px 2px rgba(0,0,0,0.05), 0 1px 4px rgba(0,0,0,0.04);
+    --sh:    0 2px 8px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.04);
+    --sh-lg: 0 6px 20px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: radial-gradient(circle, #C8D8C8 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative; z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 24px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+  .logo-mark {
+    width: 34px; height: 34px;
+    background: var(--green);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    box-shadow: 0 2px 8px rgba(27,107,64,0.3);
+  }
+  .logo em { font-style:normal; color: var(--green); }
+
+  .header-badge {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--green);
+    background: var(--green-light);
+    border: 1px solid rgba(27,107,64,0.18);
+    padding: 5px 13px;
+    border-radius: 20px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── HERO ── */
+  .hero { padding: 52px 0 44px; }
+  .hero h1 {
+    font-family: var(--font);
+    font-size: clamp(28px, 4vw, 50px);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .hero h1 em { font-style:normal; color: var(--green); }
+  .hero p {
+    font-size: 15px;
+    color: var(--text-dim);
+    max-width: 460px;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  /* ── MAIN GRID ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 316px 1fr;
+    gap: 20px;
+    align-items: start;
+    padding-bottom: 64px;
+  }
+  @media(max-width:860px){ .main-grid{ grid-template-columns:1fr; } }
+
+  /* ── INPUT PANEL ── */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sh);
+    overflow: hidden;
+    position: sticky;
+    top: 20px;
+  }
+  .panel-top {
+    padding: 17px 20px 14px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex; align-items: center; gap: 9px;
+  }
+  .panel-dot {
+    width: 7px; height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .panel-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .sec {
+    padding: 13px 20px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border-light);
+  }
+  .sec:first-of-type { border-top: none; }
+
+  .irow {
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .irow label {
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--text-dim);
+    flex: 1;
+    line-height: 1.3;
+  }
+  .iwrap { position: relative; display: flex; align-items: center; }
+  .pu  { position:absolute; left:9px;  font-size:12px; color:var(--text-muted); pointer-events:none; font-family:var(--mono); }
+  .pur { position:absolute; right:9px; font-size:12px; color:var(--text-muted); pointer-events:none; font-family:var(--mono); }
+
+  input[type=number] {
+    background: var(--card-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 500;
+    width: 106px;
+    padding: 7px 9px;
+    text-align: right;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    -moz-appearance: textfield;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance:none; }
+  input:focus {
+    background: #fff;
+    border-color: var(--green-mid);
+    box-shadow: 0 0 0 3px var(--green-glow);
+  }
+  .hu input { padding-left: 20px; }
+  .hp input { padding-right: 20px; }
+  .idim { opacity:.4; pointer-events:none; }
+
+  .calc-btn {
+    margin: 16px 20px 20px;
+    width: calc(100% - 40px);
+    padding: 12px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-sm);
+    font-family: var(--font);
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    box-shadow: 0 2px 8px rgba(27,107,64,0.28);
+  }
+  .calc-btn:hover {
+    background: #1f7d4a;
+    box-shadow: 0 4px 14px rgba(27,107,64,0.32);
+    transform: translateY(-1px);
+  }
+  .calc-btn:active { transform:none; box-shadow:none; }
+
+  /* ── RESULTS ── */
+  .results { display:flex; flex-direction:column; gap:16px; }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 11px;
+  }
+  @media(max-width:600px){ .kpi-grid{ grid-template-columns:repeat(2,1fr); } }
+
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 16px 18px 14px;
+    box-shadow: var(--sh-sm);
+    transition: box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0; height:3px;
+    background: var(--border-light);
+  }
+  .kpi.hi { background: var(--green-faint); border-color: rgba(27,107,64,0.18); }
+  .kpi.hi::after { background: var(--green); opacity:.6; }
+  .kpi:hover { box-shadow: var(--sh); border-color: var(--text-faint); }
+
+  .kpi-lbl {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .kpi-val {
+    font-family: var(--font);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.7px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .kpi-val.pos { color: var(--green); }
+  .kpi-val.neg { color: var(--red); }
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 5px;
+  }
+
+  /* ── CHART ── */
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    padding: 20px 22px 16px;
+    box-shadow: var(--sh-sm);
+  }
+  .chart-hdr {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .legend { display:flex; gap:14px; font-size:11px; color:var(--text-muted); }
+  .legend span { display:flex; align-items:center; gap:5px; }
+  .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .chart-wrap { position:relative; height:200px; }
+  canvas { display:block; }
+
+  /* ── TABLE ── */
+  .tcard {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--sh-sm);
+    overflow: hidden;
+  }
+  .thdr {
+    padding: 16px 20px 14px;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .thdr-txt {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .xbtn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    background: var(--green-light);
+    border: 1px solid rgba(27,107,64,0.22);
+    border-radius: var(--r-sm);
+    color: var(--green);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .xbtn:hover {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+    box-shadow: 0 2px 8px rgba(27,107,64,0.25);
+  }
+  .tscroll { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: var(--mono);
+  }
+  thead th {
+    padding: 8px 12px;
+    text-align: right;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    background: var(--card-alt);
+    font-family: var(--font);
+  }
+  thead th:first-child { text-align:left; min-width:196px; }
+  tbody tr { border-bottom:1px solid var(--border-light); transition:background .1s; }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background: var(--green-faint); }
+  tbody td { padding:7px 12px; text-align:right; color:var(--text-dim); white-space:nowrap; }
+  tbody td:first-child {
+    text-align:left; color:var(--text);
+    font-family:var(--font); font-size:12px; font-weight:400;
+  }
+  .pc { color: var(--green) !important; font-weight:500; }
+  .nc { color: var(--red)   !important; font-weight:500; }
+  .sr td {
+    background: var(--card-alt);
+    color: var(--text-muted) !important;
+    font-size: 10px; font-weight:600;
+    letter-spacing: 0.08em; text-transform:uppercase;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border-light);
+    font-family: var(--font) !important;
+  }
+  .br td { font-weight:600; color:var(--text) !important; background: var(--green-faint); }
+  .br td:first-child { color: var(--green) !important; }
+
+  /* ── EMPTY ── */
+  .empty {
+    padding: 60px 24px;
+    text-align: center;
+  }
+  .empty-ico {
+    width: 54px; height: 54px;
+    background: var(--green-light);
+    border-radius: 14px;
+    display: flex; align-items:center; justify-content:center;
+    font-size: 24px;
+    margin: 0 auto 14px;
+  }
+  .empty h3 { font-size:15px; font-weight:600; color:var(--text); margin-bottom:5px; }
+  .empty p  { font-size:13px; color:var(--text-muted); }
+
+  footer {
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(10px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .fu  { animation: fadeUp .3s ease both; }
+  .fu2 { animation: fadeUp .3s .06s ease both; }
+  .fu3 { animation: fadeUp .3s .12s ease both; }
+  .fu4 { animation: fadeUp .3s .18s ease both; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark">📊</div>
+      App<em>Projector</em>
+    </div>
+    <div class="header-badge">Mobil SaaS · Finansal Model</div>
+  </header>
+
+  <div class="hero">
+    <h1>Uygulamanın<br><em>finansal geleceğini</em><br>hesapla.</h1>
+    <p>Varsayımlarını gir, 12 aylık gelir, kullanıcı büyümesi ve kar/zarar tablosunu anında gör. Excel olarak indir.</p>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- INPUT PANEL -->
+    <aside class="panel">
+      <div class="panel-top">
+        <div class="panel-dot"></div>
+        <div class="panel-title">Varsayımlar</div>
+      </div>
+
+      <div class="sec">💰 Fiyatlandırma</div>
+      <div class="irow">
+        <label>Aylık Plan</label>
+        <div class="iwrap hu">
+          <span class="pu">₺</span>
+          <input type="number" id="priceMonthly" value="249" min="0">
+        </div>
+      </div>
+      <div class="irow">
+        <label>Yıllık Plan (toplam)</label>
+        <div class="iwrap hu">
+          <span class="pu">₺</span>
+          <input type="number" id="priceYearly" value="1499" min="0">
+        </div>
+      </div>
+
+      <div class="sec">📊 Plan Mix</div>
+      <div class="irow">
+        <label>Aylık plan oranı</label>
+        <div class="iwrap hp">
+          <input type="number" id="mixMonthly" value="60" min="0" max="100">
+          <span class="pur">%</span>
+        </div>
+      </div>
+      <div class="irow">
+        <label style="color:var(--text-muted)">Yıllık plan oranı</label>
+        <div class="iwrap hp idim">
+          <input type="number" id="mixYearly" value="40" readonly>
+          <span class="pur">%</span>
+        </div>
+      </div>
+
+      <div class="sec">📈 Büyüme</div>
+      <div class="irow">
+        <label>Başlangıç aylık install</label>
+        <div class="iwrap">
+          <input type="number" id="startInstall" value="1000" min="0" step="100">
+        </div>
+      </div>
+      <div class="irow">
+        <label>Aylık büyüme oranı</label>
+        <div class="iwrap hp">
+          <input type="number" id="growthRate" value="25" min="0" max="200">
+          <span class="pur">%</span>
+        </div>
+      </div>
+
+      <div class="sec">🔄 Dönüşüm & Churn</div>
+      <div class="irow">
+        <label>Trial → Paid dönüşüm</label>
+        <div class="iwrap hp">
+          <input type="number" id="convRate" value="7" min="0" max="100" step="0.5">
+          <span class="pur">%</span>
+        </div>
+      </div>
+      <div class="irow">
+        <label>Churn – aylık plan</label>
+        <div class="iwrap hp">
+          <input type="number" id="churnMonthly" value="15" min="0" max="100">
+          <span class="pur">%</span>
+        </div>
+      </div>
+      <div class="irow">
+        <label>Churn – yıllık plan</label>
+        <div class="iwrap hp">
+          <input type="number" id="churnYearly" value="5" min="0" max="100">
+          <span class="pur">%</span>
+        </div>
+      </div>
+
+      <div class="sec">💸 Aylık Giderler</div>
+      <div class="irow">
+        <label>Pazarlama & İçerik</label>
+        <div class="iwrap hu">
+          <span class="pu">₺</span>
+          <input type="number" id="costMarketing" value="24000" min="0" step="1000">
+        </div>
+      </div>
+      <div class="irow">
+        <label>Sunucu & Altyapı</label>
+        <div class="iwrap hu">
+          <span class="pu">₺</span>
+          <input type="number" id="costServer" value="1000" min="0" step="500">
+        </div>
+      </div>
+      <div class="irow">
+        <label>Diğer giderler</label>
+        <div class="iwrap hu">
+          <span class="pu">₺</span>
+          <input type="number" id="costOther" value="0" min="0" step="500">
+        </div>
+      </div>
+
+      <button class="calc-btn" onclick="calculate()">Hesapla →</button>
+    </aside>
+
+    <!-- RESULTS -->
+    <main class="results" id="results">
+      <div class="empty">
+        <div class="empty-ico">📊</div>
+        <h3>Hazır</h3>
+        <p>Sol paneldeki varsayımları doldurup<br><strong>Hesapla</strong>'ya bas.</p>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <span>AppProjector · Mobil SaaS Finansal Modeli</span>
+    <span>Tüm değerler tahminidir · Yatırım tavsiyesi değildir</span>
+  </footer>
+</div>
+
+<script>
+document.getElementById('mixMonthly').addEventListener('input', function() {
+  const v = Math.min(100, Math.max(0, parseFloat(this.value) || 0));
+  document.getElementById('mixYearly').value = (100 - v).toFixed(0);
+});
+
+let lastData = null;
+
+function calculate() {
+  const pm   = parseFloat(document.getElementById('priceMonthly').value)  || 0;
+  const py   = parseFloat(document.getElementById('priceYearly').value)   || 0;
+  const mixM = (parseFloat(document.getElementById('mixMonthly').value)   || 0) / 100;
+  const mixY = 1 - mixM;
+  const st   = parseFloat(document.getElementById('startInstall').value)  || 0;
+  const gw   = (parseFloat(document.getElementById('growthRate').value)   || 0) / 100;
+  const cv   = (parseFloat(document.getElementById('convRate').value)     || 0) / 100;
+  const chM  = (parseFloat(document.getElementById('churnMonthly').value) || 0) / 100;
+  const chY  = (parseFloat(document.getElementById('churnYearly').value)  || 0) / 100;
+  const cMkt = parseFloat(document.getElementById('costMarketing').value) || 0;
+  const cSrv = parseFloat(document.getElementById('costServer').value)    || 0;
+  const cOth = parseFloat(document.getElementById('costOther').value)     || 0;
+  const tc   = cMkt + cSrv + cOth;
+
+  let rows = [], prev = 0, cum = 0;
+  for (let i = 0; i < 12; i++) {
+    const install  = Math.round(st * Math.pow(1 + gw, i));
+    const newPaid  = Math.round(install * cv);
+    const cMon     = i === 0 ? 0 : -Math.round(prev * mixM * chM);
+    const cYr      = i === 0 ? 0 : -Math.round(prev * mixY * chY);
+    const cTot     = cMon + cYr;
+    const paid     = Math.max(0, prev + newPaid + cTot);
+    const revM     = Math.round(paid * mixM) * pm;
+    const revY     = Math.round(paid * mixY) * (py / 12);
+    const rev      = revM + revY;
+    const cost     = -tc;
+    const profit   = rev + cost;
+    cum           += profit;
+    rows.push({ install, newPaid, cMon, cYr, cTot, paid, revM, revY, rev,
+                arpu: paid > 0 ? rev / paid : 0, cost, profit,
+                margin: rev > 0 ? profit / rev : 0, cum });
+    prev = paid;
+  }
+  lastData = { rows, inputs: { pm, py, mixM, mixY, st, gw, cv, chM, chY, tc } };
+  render(rows);
+}
+
+const fK   = v => { const a=Math.abs(v),s=v<0?'-':''; return a>=1e6?s+(a/1e6).toFixed(2)+'M ₺':a>=1e3?s+(a/1e3).toFixed(1)+'K ₺':v.toFixed(0)+' ₺'; };
+const fN   = v => v >= 1000 ? (v/1000).toFixed(1)+'K' : String(v);
+const fTRY = v => { const a=Math.abs(v),s=v<0?'−':''; return a>=1e6?s+(a/1e6).toFixed(3)+'M ₺':s+a.toLocaleString('tr-TR')+' ₺'; };
+const fP   = v => (v*100).toFixed(1)+'%';
+
+function render(rows) {
+  const last = rows[11];
+  const tRev = rows.reduce((s,r)=>s+r.rev,0);
+  const tPro = rows.reduce((s,r)=>s+r.profit,0);
+  const tCh  = rows.reduce((s,r)=>s+Math.abs(r.cTot),0);
+  const tIns = rows.reduce((s,r)=>s+r.install,0);
+  const rpu  = last.paid > 0 ? last.rev/last.paid : 0;
+  const be   = rpu > 0 ? Math.ceil((-last.cost)/rpu) : '—';
+
+  const c = document.getElementById('results');
+  c.innerHTML = '';
+
+  // KPIs
+  const kg = document.createElement('div');
+  kg.className = 'kpi-grid fu';
+  [
+    {l:'Yıl Sonu Paid User',  v:last.paid.toLocaleString('tr-TR'), cls:'pos', s:`+${fN(rows.reduce((s,r)=>s+r.newPaid,0))} yeni · −${fN(tCh)} churn`},
+    {l:'Yıllık Toplam Gelir', v:fK(tRev),  cls:tRev>=0?'pos':'neg', s:`ARPU: ${fK(last.arpu)}/ay`},
+    {l:'Yıllık Net Kar',      v:fK(tPro),  cls:tPro>=0?'pos':'neg', s:fP(tRev>0?tPro/tRev:0)+' marj', hi:true},
+    {l:'Toplam Install',      v:fN(tIns),  cls:'', s:`Aralık: ${fN(last.install)}`},
+    {l:'Break-even',          v:typeof be==='number'?be+' paid':'—', cls:'', s:'gereken min. kullanıcı'},
+    {l:'Kümülatif Nakit',     v:fK(last.cum), cls:last.cum>=0?'pos':'neg', s:'Aralık sonu'},
+  ].forEach(k => {
+    kg.innerHTML += `<div class="kpi ${k.hi?'hi':''}">
+      <div class="kpi-lbl">${k.l}</div>
+      <div class="kpi-val ${k.cls}">${k.v}</div>
+      <div class="kpi-sub">${k.s}</div>
+    </div>`;
+  });
+  c.appendChild(kg);
+
+  // Chart
+  const cc = document.createElement('div');
+  cc.className = 'chart-card fu2';
+  cc.innerHTML = `
+    <div class="chart-hdr">Gelir &amp; Kar Trendi
+      <div class="legend">
+        <span><span class="dot" style="background:#1B6B40"></span>Gelir</span>
+        <span><span class="dot" style="background:#B45309"></span>Net Kar</span>
+        <span><span class="dot" style="background:#C53030"></span>Zarar</span>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="ch"></canvas></div>`;
+  c.appendChild(cc);
+  setTimeout(() => drawChart(rows), 10);
+
+  // Table
+  const tc2 = document.createElement('div');
+  tc2.className = 'tcard fu3';
+  const MN = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  const th = `<thead><tr><th>Metrik</th>${MN.map(m=>`<th>${m}</th>`).join('')}<th>Yıllık</th></tr></thead>`;
+
+  const sr = t => `<tr class="sr"><td colspan="14">${t}</td></tr>`;
+  const tr = (lbl, vals, fmt=fN, bold=false, sum=false) => {
+    const ann = sum ? vals.reduce((a,b)=>a+b,0) : vals[vals.length-1];
+    return `<tr class="${bold?'br':''}">
+      <td>${lbl}</td>
+      ${vals.map(v=>`<td class="${v>0?'pc':v<0?'nc':''}">${fmt(v)}</td>`).join('')}
+      <td class="${ann>=0?'pc':'nc'}">${fmt(ann)}</td>
+    </tr>`;
+  };
+
+  let tb = '<tbody>';
+  tb += sr('1 · KULLANICI &amp; FUNNEL');
+  tb += tr('📲 App Install',         rows.map(r=>r.install), fN,   true, true);
+  tb += tr('🆓 Free Trial',           rows.map(r=>r.install), fN,   false,true);
+  tb += tr('✅ Yeni Paid Kullanıcı',  rows.map(r=>r.newPaid), fN,   false,true);
+  tb += tr('❌ Toplam Churn',         rows.map(r=>r.cTot),    fN,   false,true);
+  tb += tr('💳 Aktif Paid (ay sonu)', rows.map(r=>r.paid),    fN,   true, false);
+  tb += sr('2 · GELİR');
+  tb += tr('Aylık Plan Geliri',       rows.map(r=>r.revM),    fTRY, false,true);
+  tb += tr('Yıllık Plan Geliri (pay)',rows.map(r=>r.revY),    fTRY, false,true);
+  tb += tr('💰 Toplam Gelir',         rows.map(r=>r.rev),     fTRY, true, true);
+  tb += tr('ARPU',                    rows.map(r=>Math.round(r.arpu)), fTRY, false,false);
+  tb += sr('3 · GİDERLER');
+  tb += tr('🔴 Toplam Giderler',      rows.map(r=>r.cost),    fTRY, true, true);
+  tb += sr('4 · KAR / ZARAR');
+  tb += tr('📈 Net Kar / Zarar',      rows.map(r=>r.profit),  fTRY, true, true);
+  tb += tr('Kar Marjı',              rows.map(r=>r.margin),  v=>(v*100).toFixed(1)+'%', false,false);
+  tb += tr('Kümülatif Nakit Akışı',  rows.map(r=>r.cum),     fTRY, true, false);
+  tb += '</tbody>';
+
+  tc2.innerHTML = `
+    <div class="thdr">
+      <span class="thdr-txt">Aylık Detay — 12 Ay</span>
+      <button class="xbtn" onclick="exportExcel()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M6.5 1v8M3.5 6.5L6.5 9.5l3-3M1.5 12h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Excel İndir
+      </button>
+    </div>
+    <div class="tscroll"><table>${th}${tb}</table></div>`;
+  c.appendChild(tc2);
+}
+
+function drawChart(rows) {
+  const canvas = document.getElementById('ch');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.offsetWidth;
+  const H = 200;
+  canvas.width  = W * devicePixelRatio;
+  canvas.height = H * devicePixelRatio;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+
+  const revs = rows.map(r => r.rev);
+  const pros = rows.map(r => r.profit);
+  const maxV = Math.max(...revs, ...pros.map(Math.abs), 1);
+  const minV = Math.min(...pros, 0);
+  const rng  = maxV - minV;
+  const pad  = { t:14, r:10, b:30, l:66 };
+  const cw = W - pad.l - pad.r;
+  const ch = H - pad.t - pad.b;
+  const tx = i => pad.l + (i / 11) * cw;
+  const ty = v => pad.t + (1 - (v - minV) / rng) * ch;
+
+  // gridlines
+  ctx.setLineDash([3,4]);
+  [0,.5,1].forEach(t => {
+    const y = ty(minV + t*rng);
+    ctx.strokeStyle = '#DDE6DD'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // zero line
+  if (minV < 0) {
+    const zy = ty(0);
+    ctx.strokeStyle = '#B2C8B2'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,zy); ctx.lineTo(pad.l+cw,zy); ctx.stroke();
+  }
+
+  // revenue area fill
+  ctx.beginPath();
+  revs.forEach((v,i) => i===0 ? ctx.moveTo(tx(i),ty(v)) : ctx.lineTo(tx(i),ty(v)));
+  ctx.lineTo(tx(11), ty(Math.max(minV,0)));
+  ctx.lineTo(tx(0),  ty(Math.max(minV,0)));
+  ctx.closePath();
+  const gr = ctx.createLinearGradient(0,pad.t,0,pad.t+ch);
+  gr.addColorStop(0,'rgba(27,107,64,0.10)');
+  gr.addColorStop(1,'rgba(27,107,64,0.01)');
+  ctx.fillStyle=gr; ctx.fill();
+
+  // revenue line
+  ctx.beginPath();
+  revs.forEach((v,i) => i===0 ? ctx.moveTo(tx(i),ty(v)) : ctx.lineTo(tx(i),ty(v)));
+  ctx.strokeStyle='#1B6B40'; ctx.lineWidth=2.5; ctx.stroke();
+
+  // profit line segments
+  for (let i=0; i<11; i++) {
+    ctx.beginPath();
+    ctx.moveTo(tx(i), ty(pros[i])); ctx.lineTo(tx(i+1), ty(pros[i+1]));
+    ctx.strokeStyle = (pros[i]<0||pros[i+1]<0) ? '#C53030' : '#B45309';
+    ctx.lineWidth=2; ctx.setLineDash([5,3]); ctx.stroke(); ctx.setLineDash([]);
+  }
+  pros.forEach((v,i) => {
+    ctx.beginPath();
+    ctx.arc(tx(i),ty(v),2.5,0,Math.PI*2);
+    ctx.fillStyle = v<0 ? '#C53030' : '#B45309';
+    ctx.fill();
+  });
+
+  // labels
+  const MN = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+  ctx.fillStyle='#7A9A7A'; ctx.font='10px Plus Jakarta Sans,sans-serif'; ctx.textAlign='center';
+  MN.forEach((m,i) => ctx.fillText(m, tx(i), H-9));
+  ctx.textAlign='right';
+  [0,.5,1].forEach(t => {
+    const v=minV+t*rng, y=ty(v);
+    ctx.fillText(fK(v), pad.l-5, y+4);
+  });
+}
+
+function exportExcel() {
+  if (!lastData) return;
+  const { rows, inputs: inp } = lastData;
+  const MN = ['Oca-26','Şub-26','Mar-26','Nis-26','May-26','Haz-26','Tem-26','Ağu-26','Eyl-26','Eki-26','Kas-26','Ara-26'];
+  const d = [['Metrik',...MN,'Yıllık']];
+  const s = t => d.push([t]);
+  const r = (l,v,sum=false) => d.push([l,...v, sum?v.reduce((a,b)=>a+b,0):v[v.length-1]]);
+
+  s('KULLANICI & FUNNEL');
+  r('App Install',          rows.map(r=>r.install),true);
+  r('Free Trial',           rows.map(r=>r.install),true);
+  r('Yeni Paid Kullanıcı',  rows.map(r=>r.newPaid),true);
+  r('Toplam Churn',         rows.map(r=>r.cTot),   true);
+  r('Aktif Paid (ay sonu)', rows.map(r=>r.paid));
+  s('GELİR (₺)');
+  r('Aylık Plan Geliri',    rows.map(r=>r.revM),   true);
+  r('Yıllık Plan Geliri',   rows.map(r=>r.revY),   true);
+  r('Toplam Gelir',         rows.map(r=>r.rev),    true);
+  r('ARPU',                 rows.map(r=>Math.round(r.arpu)));
+  s('GİDERLER (₺)');
+  r('Toplam Giderler',      rows.map(r=>r.cost),   true);
+  s('KAR / ZARAR (₺)');
+  r('Net Kar / Zarar',      rows.map(r=>r.profit), true);
+  r('Kar Marjı (%)',        rows.map(r=>parseFloat((r.margin*100).toFixed(1))));
+  r('Kümülatif Nakit',      rows.map(r=>r.cum));
+
+  const ws = XLSX.utils.aoa_to_sheet(d);
+  ws['!cols'] = [{wch:28},...Array(13).fill({wch:13})];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Projeksiyon');
+
+  const id = [
+    ['Parametre','Değer'],
+    ['Aylık Plan Fiyatı (₺)', inp.pm], ['Yıllık Plan Fiyatı (₺)', inp.py],
+    ['Aylık Plan Oranı', inp.mixM],    ['Yıllık Plan Oranı', inp.mixY],
+    ['Başlangıç Install', inp.st],     ['Büyüme Oranı', inp.gw],
+    ['Dönüşüm Oranı', inp.cv],         ['Churn - Aylık', inp.chM],
+    ['Churn - Yıllık', inp.chY],       ['Toplam Aylık Gider (₺)', inp.tc],
+  ];
+  const ws2 = XLSX.utils.aoa_to_sheet(id);
+  ws2['!cols'] = [{wch:30},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, ws2, 'Varsayımlar');
+  XLSX.writeFile(wb, 'AppProjector_2026.xlsx');
+}
+
+window.addEventListener('load', calculate);
+</script>
+</body>
+</html>
